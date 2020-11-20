@@ -23,6 +23,7 @@
   "scripts": {
     "start": "react-scripts start",
     "build": "react-scripts build",
+    "scrapbuild": "yarn run scrap && build",
     "test": "react-scripts test",
     "eject": "react-scripts eject",
     "scrap": "ts-node -O \"{\\\"module\\\":\\\"CommonJS\\\"}\" scripts/scrapper.ts"
