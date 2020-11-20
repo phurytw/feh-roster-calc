@@ -8,7 +8,7 @@ import {
 } from "fs";
 import { IncomingMessage } from "http";
 import { get } from "https";
-import { join, resolve } from "path";
+import { resolve } from "path";
 import sanitizeFilename from "sanitize-filename";
 import { Hero, PossibleStats, Skill, Slot, WeaponType } from "../src/types";
 
@@ -769,15 +769,27 @@ async function run(
     scrapSeals,
   ];
 
-  // ensure that data directory exists
+  // ensure that data/assets directories exists
   const dataDir = resolve(__dirname, "..", "src", "data");
-  if (!existsSync(dataDir)) {
-    mkdirSync(dataDir, { recursive: true });
-  }
+  const heroImagesDir = resolve(__dirname, "..", "public", "heroes");
+  const passiveImagesDir = resolve(__dirname, "..", "public", "passives");
+  const weaponTypeImagesDir = resolve(__dirname, "..", "public", "weapon-types");
+
+  [dataDir, heroImagesDir, passiveImagesDir, weaponTypeImagesDir].forEach(
+    (dir) => {
+      if (!existsSync(dir)) {
+        mkdirSync(dir, { recursive: true });
+      }
+    }
+  );
 
   for (let i = 0; i < toRun.length; i++) {
     const task = toRun[i];
-    await task({ overwrite, showSkipped, showGot });
+    try {
+      await task({ overwrite, showSkipped, showGot });
+    } catch (error) {
+      console.error(error);
+    }
   }
 }
 
