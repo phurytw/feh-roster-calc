@@ -1,18 +1,32 @@
 import { load } from "cheerio";
-import { createWriteStream, writeFileSync, WriteStream } from "fs";
+import {
+  createWriteStream,
+  existsSync,
+  mkdirSync,
+  writeFileSync,
+  WriteStream,
+} from "fs";
 import { IncomingMessage } from "http";
 import { get } from "https";
-import { resolve } from "path";
+import { join, resolve } from "path";
 import sanitizeFilename from "sanitize-filename";
 import { Hero, PossibleStats, Skill, Slot, WeaponType } from "../src/types";
-import heroDb from "../src/data/heroes.json";
-import weaponDb from "../src/data/weapons.json";
-import assistDb from "../src/data/assists.json";
-import specialDb from "../src/data/specials.json";
-import passiveADb from "../src/data/a-passives.json";
-import passiveBDb from "../src/data/b-passives.json";
-import passiveCDb from "../src/data/c-passives.json";
-import sealDb from "../src/data/seals.json";
+
+const heroDb = importDb("../src/data/heroes.json");
+const weaponDb = importDb("../src/data/weapons.json");
+const assistDb = importDb("../src/data/assists.json");
+const specialDb = importDb("../src/data/specials.json");
+const passiveADb = importDb("../src/data/a-passives.json");
+const passiveBDb = importDb("../src/data/b-passives.json");
+const passiveCDb = importDb("../src/data/c-passives.json");
+const sealDb = importDb("../src/data/seals.json");
+
+function importDb(path: string) {
+  if (existsSync(path)) {
+    return require(path);
+  }
+  return [];
+}
 
 const heroList: string = "https://feheroes.gamepedia.com/List_of_Heroes";
 const weaponList: string = "https://feheroes.gamepedia.com/Weapons_(full)";
@@ -754,6 +768,13 @@ async function run(
     scrapPassives,
     scrapSeals,
   ];
+
+  // ensure that data directory exists
+  const dataDir = resolve(__dirname, "..", "src", "data");
+  if (!existsSync(dataDir)) {
+    mkdirSync(dataDir, { recursive: true });
+  }
+
   for (let i = 0; i < toRun.length; i++) {
     const task = toRun[i];
     await task({ overwrite, showSkipped, showGot });
