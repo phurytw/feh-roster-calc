@@ -742,7 +742,7 @@ async function scrapSeals({ overwrite, showGot, showSkipped }: ScrapOptions) {
   }
 
   writeFileSync(
-    resolve(__dirname, "..", "src", "seals.json"),
+    resolve(__dirname, "..", "src", "data", "seals.json"),
     JSON.stringify(skills)
   );
 }
