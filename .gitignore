@@ -25,5 +25,4 @@ yarn-error.log*
 #script assets
 /public/heroes
 /public/passives
-/public/weapon-types
 /src/data
